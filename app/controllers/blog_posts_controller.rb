@@ -2,11 +2,11 @@ class BlogPostsController < ApplicationController
     before_action :authenticate_user!, except: [:index, :show]
 
     def index
-        @blog_posts = BlogPost.all
+        @blog_posts = user_signed_in? ? Blogpost.all : BlogPost.published
     end
 
     def show
-        @blog_posts = BlogPost.find(params[:id])
+        @blog_posts = BlogPost.published.find(params[:id])
         rescue ActiveRecord::RecordNotFound
             redirect_to "/"
     end
@@ -46,7 +46,7 @@ class BlogPostsController < ApplicationController
     private
 
     def blog_post_params
-        params.require(:blog_post).permit(:title, :body)
+        params.require(:blog_post).permit(:title, :body, :published_at)
     end
 
 
